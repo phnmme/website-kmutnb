@@ -5,16 +5,38 @@ import { ProfileHeader } from "./profile-header";
 import { ProfileInfoCard } from "./profile-info-card";
 import { ProfileEditForm } from "./profile-edit-form";
 import Particles from "../bits/Particles";
+import { updateProfile } from "@/action/profileAction";
+import { useRouter } from "next/navigation";
+interface prop {
+  user: {
+    id: number;
+    email: string;
+    profile: {
+      id: number;
+      studentCode: string;
+      firstNameTh: string;
+      lastNameTh: string;
+      phoneNumber: string;
+      department: string;
+      entryYear: number;
+      gradYear: number;
+      jobField: string | null;
+      jobPosition: string | null;
+    };
+  } | null;
+}
 
-export default function MainProfile() {
+export default function MainProfile({ user }: prop) {
+  const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
 
   const [profile, setProfile] = useState({
-    fullName: "นางสาวกอไก่ ขอไข่",
-    studentId: "1234567890",
-    major: "เทคโนโลยีสารสนเทศเพื่อการจัดการ",
-    graduateYear: "2565",
-    job: "Software Eng",
+    fullName:
+      user?.profile?.firstNameTh + " " + user?.profile?.lastNameTh || "ไม่ระบุ",
+    studentCode: user?.profile?.studentCode || "ไม่ระบุ",
+    department: user?.profile?.department || "ไม่ระบุ",
+    gradYear: String(user?.profile?.gradYear) || "ไม่ระบุ",
+    jobField: user?.profile?.jobField || "ไม่ระบุ",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +44,25 @@ export default function MainProfile() {
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    console.log("บันทึกข้อมูล:", profile);
-    setIsEdit(false);
+  const handleSave = async () => {
+    const profileData = {
+      fullname: profile.fullName,
+      studentCode: profile.studentCode,
+      department: profile.department,
+      gradYear: parseInt(profile.gradYear),
+      jobField: profile.jobField,
+    };
+    try {
+      const res = await updateProfile(profileData);
+      // console.log("Update profile response:", res);
+      if (res) {
+        setIsEdit(false);
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("เกิดข้อผิดพลาดในการอัปเดตโปรไฟล์");
+    }
   };
 
   return (
@@ -43,11 +81,13 @@ export default function MainProfile() {
       </div>
       <main className="relative z-10  py-8 md:py-16">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
-          {/* Header card with avatar + name */}
           <ProfileHeader
-            fullName={profile.fullName}
-            studentId={profile.studentId}
-            job={profile.job}
+            fullName={
+              user?.profile?.firstNameTh + " " + user?.profile?.lastNameTh ||
+              "ไม่ระบุ"
+            }
+            studentId={user?.profile?.studentCode || "ไม่ระบุ"}
+            job={user?.profile?.jobField || "ไม่ระบุ"}
             isEdit={isEdit}
             onEditClick={() => setIsEdit(true)}
           />

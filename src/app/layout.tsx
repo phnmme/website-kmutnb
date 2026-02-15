@@ -3,6 +3,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Bai_Jamjuree, Prompt } from "next/font/google";
 import "./globals.css";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 
 const bai = Bai_Jamjuree({
   subsets: ["thai", "latin"],
@@ -16,15 +17,16 @@ const prompt = Prompt({
   variable: "--font-prompt",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
   return (
     <html lang="th">
       <body className={prompt.className}>
-        <Navbar />
+        <Navbar user={user} />
         <main>{children}</main>
         <Footer />
       </body>

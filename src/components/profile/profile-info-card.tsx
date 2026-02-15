@@ -30,10 +30,10 @@ function InfoRow({ icon, label, value }: InfoRowProps) {
 interface ProfileInfoCardProps {
   profile: {
     fullName: string;
-    studentId: string;
-    major: string;
-    graduateYear: string;
-    job: string;
+    studentCode: string;
+    department: string;
+    gradYear: string;
+    jobField: string;
   };
 }
 
@@ -56,22 +56,22 @@ export function ProfileInfoCard({ profile }: ProfileInfoCardProps) {
         <InfoRow
           icon={<GraduationCap className="h-5 w-5" />}
           label="รหัสนักศึกษา"
-          value={profile.studentId}
+          value={profile.studentCode}
         />
         <InfoRow
           icon={<BookOpen className="h-5 w-5" />}
           label="สาขา"
-          value={profile.major}
+          value={profile.department}
         />
         <InfoRow
           icon={<CalendarDays className="h-5 w-5" />}
           label="ปีที่จบ"
-          value={profile.graduateYear}
+          value={profile.gradYear}
         />
         <InfoRow
           icon={<Briefcase className="h-5 w-5" />}
           label="ตำแหน่งงาน"
-          value={profile.job}
+          value={profile.jobField}
         />
       </div>
     </div>

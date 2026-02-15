@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { User } from "@/types/user";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn, LogOut, UserPlus } from "lucide-react";
 
 type Props = {
   user?: User | null;
@@ -33,9 +33,31 @@ export default function NavbarActions({ user }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <span className="text-sm font-medium">👤 {user.name}</span>
-      <button className="px-3 py-1 rounded-md text-sm border hover:bg-red-50">
+    <div className="flex items-center gap-3">
+      {/* Profile Link */}
+      <Link
+        href="/profile"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg transition 
+        hover:bg-congress-600 group"
+      >
+        {/* Avatar */}
+        <div className="w-8 h-8 rounded-full bg-bluez-tone-4 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+          {user.name?.charAt(0).toUpperCase()}
+        </div>
+
+        {/* Name */}
+        <span className="text-sm font-medium text-bluez-tone-5 group-hover:text-bluez-tone-6">
+          {user.name}
+        </span>
+      </Link>
+
+      {/* Logout */}
+      <button
+        // onClick={onLogout}
+        className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm border border-red-200 
+        text-red-500 hover:bg-red-50 hover:border-red-300 transition"
+      >
+        <LogOut className="w-4 h-4" />
         Logout
       </button>
     </div>

@@ -61,7 +61,7 @@ export function ProfileHeader({
           <button
             type="button"
             onClick={onEditClick}
-            className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-lg bg-bluez-tone-3 px-4 py-2 text-sm font-medium text-bluez-tone-5 transition hover:bg-bluez-tone-2 hover:text-bluez-tone-1 md:static"
+            className="absolute bottom-4 right-4 cursor-pointer inline-flex items-center gap-2 rounded-lg bg-bluez-tone-3 px-4 py-2 text-sm font-medium text-bluez-tone-5 transition hover:bg-bluez-tone-2 hover:text-bluez-tone-1 md:static"
           >
             <Pencil className="h-4 w-4" />
             <span className="hidden sm:inline">{"แก้ไขโปรไฟล์"}</span>

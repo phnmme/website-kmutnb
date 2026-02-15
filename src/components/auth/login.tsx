@@ -3,9 +3,21 @@
 import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { useState } from "react";
 import Particles from "../bits/Particles";
+import { login } from "@/action/authAction";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const response = await login(email, password);
+      // console.log("Login successful:", response);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
   return (
     <>
       <div className="absolute inset-0 z-0">
@@ -38,6 +50,8 @@ export default function Login() {
                 type="email"
                 className="block w-full pl-12 pr-4 py-3 bg-bluez-tone-3/50 border-1 border-bluez-tone-1 focus:border-bluez-tone-1 focus:bg-white text-[#001f3f] placeholder:text-gray-400 rounded-xl transition-all outline-none"
                 placeholder="example@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -61,6 +75,8 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 className="block  w-full pl-12 pr-12 py-3 border-1 border-bluez-tone-1 bg-bluez-tone-3/50  focus:border-bluez-tone-1 focus:bg-white text-[#001f3f] placeholder:text-gray-400 rounded-xl transition-all outline-none"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 onClick={() => setShowPassword(!showPassword)}
@@ -71,7 +87,10 @@ export default function Login() {
             </div>
             <div className=" flex justify-center mt-4 group">
               <div className="  flex items-center  text-congress-50"></div>
-              <button className="w-full block bg-congress-300 text-congress-50 p-4 rounded-xl hover:bg-congress-400 transition duration-300 cursor-pointer font-semibold shadow-md">
+              <button
+                onClick={() => handleLogin()}
+                className="w-full block bg-congress-300 text-congress-50 p-4 rounded-xl hover:bg-congress-400 transition duration-300 cursor-pointer font-semibold shadow-md"
+              >
                 <p>
                   <LogIn
                     className="inline mr-3 group-hover:mr-4 transition-all duration-300"

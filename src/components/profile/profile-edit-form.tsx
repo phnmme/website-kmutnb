@@ -43,10 +43,10 @@ function FormInput({ icon, label, name, value, onChange }: FormInputProps) {
 interface ProfileEditFormProps {
   profile: {
     fullName: string;
-    studentId: string;
-    major: string;
-    graduateYear: string;
-    job: string;
+    studentCode: string;
+    department: string;
+    gradYear: string;
+    jobField: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSave: () => void;
@@ -79,29 +79,29 @@ export function ProfileEditForm({
         <FormInput
           icon={<GraduationCap className="h-4 w-4" />}
           label="รหัสนักศึกษา"
-          name="studentId"
-          value={profile.studentId}
+          name="studentCode"
+          value={profile.studentCode}
           onChange={onChange}
         />
         <FormInput
           icon={<BookOpen className="h-4 w-4" />}
           label="สาขา"
-          name="major"
-          value={profile.major}
+          name="department"
+          value={profile.department}
           onChange={onChange}
         />
         <FormInput
           icon={<CalendarDays className="h-4 w-4" />}
           label="ปีที่จบ"
-          name="graduateYear"
-          value={profile.graduateYear}
+          name="gradYear"
+          value={profile.gradYear}
           onChange={onChange}
         />
         <FormInput
           icon={<Briefcase className="h-4 w-4" />}
           label="ตำแหน่งงาน"
-          name="job"
-          value={profile.job}
+          name="jobField"
+          value={profile.jobField}
           onChange={onChange}
         />
       </div>
@@ -111,7 +111,7 @@ export function ProfileEditForm({
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-bluez-tone-2 bg-transparent px-5 py-2.5 text-sm font-medium text-bluez-tone-4 transition hover:bg-bluez-tone-2/30"
+          className="inline-flex items-center justify-center cursor-pointer gap-2 rounded-lg border border-bluez-tone-2 bg-transparent px-5 py-2.5 text-sm font-medium text-bluez-tone-4 transition hover:bg-bluez-tone-2/30"
         >
           <X className="h-4 w-4" />
           {"ยกเลิก"}
@@ -119,7 +119,7 @@ export function ProfileEditForm({
         <button
           type="button"
           onClick={onSave}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-bluez-tone-4 px-5 py-2.5 text-sm font-medium text-bluez-tone-5 shadow-sm transition hover:bg-bluez-tone-1"
+          className="inline-flex items-center justify-center cursor-pointer gap-2 rounded-lg bg-bluez-tone-4 px-5 py-2.5 text-sm font-medium text-bluez-tone-5 shadow-sm transition hover:bg-bluez-tone-1"
         >
           <Save className="h-4 w-4" />
           {"บันทึก"}

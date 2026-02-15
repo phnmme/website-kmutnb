@@ -5,19 +5,43 @@ import {
   Mail,
   Lock,
   IdCard,
-  Calendar,
   Phone,
   GraduationCap,
   UserPlus,
   Eye,
   EyeOff,
 } from "lucide-react";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import Particles from "../bits/Particles";
+import { register } from "@/action/authAction";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [studentCode, setStudentCode] = useState("");
+  const [firstNameTh, setFirstNameTh] = useState("");
+  const [lastNameTh, setLastNameTh] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [entryYear, setEntryYear] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const response = await register(
+      email,
+      password,
+      confirmPassword,
+      studentCode,
+      firstNameTh,
+      lastNameTh,
+      phoneNumber,
+      entryYear
+    );
+    // console.log(response);
+  };
 
   return (
     <>
@@ -43,7 +67,7 @@ export default function Register() {
           กรุณากรอกข้อมูลเพื่อสร้างบัญชีและอัปเดตฐานข้อมูลนักศึกษา
         </p>
 
-        <form className="p-8 space-y-10 w-full">
+        <form className="p-8 space-y-10 w-full" onSubmit={handleSubmit}>
           <section className="space-y-4">
             <h2 className="font-bold text-bluez-tone-5 flex items-center gap-2">
               <Lock size={18} />
@@ -62,6 +86,8 @@ export default function Register() {
                   required
                   className="w-full pl-12 pr-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 focus:bg-white rounded-xl outline-none"
                   placeholder="example@xyz.xyz"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -77,6 +103,8 @@ export default function Register() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-12 pr-12 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
                   />
                   <button
@@ -98,6 +126,8 @@ export default function Register() {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-12 pr-12 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
                   />
                   <button
@@ -123,21 +153,36 @@ export default function Register() {
                 label="รหัสนักศึกษา"
                 icon={<IdCard />}
                 placeholder="รหัสนักศึกษา"
+                value={studentCode}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setStudentCode(e.target.value)
+                }
               />
-              <Input label="ชื่อ (ไทย)" placeholder="ชื่อ (ไทย)" />
-              <Input label="นามสกุล (ไทย)" placeholder="นามสกุล (ไทย)" />
-
               <Input
-                label="วันเดือนปีเกิด"
-                type="date"
-                icon={<Calendar />}
-                placeholder="วันเดือนปีเกิด"
+                label="ชื่อ (ไทย)"
+                placeholder="ชื่อ (ไทย)"
+                value={firstNameTh}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setFirstNameTh(e.target.value)
+                }
+              />
+              <Input
+                label="นามสกุล (ไทย)"
+                placeholder="นามสกุล (ไทย)"
+                value={lastNameTh}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setLastNameTh(e.target.value)
+                }
               />
               <Input
                 label="เบอร์โทรศัพท์"
                 type="tel"
                 icon={<Phone />}
                 placeholder="เบอร์โทรศัพท์"
+                value={phoneNumber}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setPhoneNumber(e.target.value)
+                }
               />
             </div>
           </section>
@@ -156,6 +201,8 @@ export default function Register() {
             />
             <input
               type="number"
+              value={entryYear}
+              onChange={(e) => setEntryYear(e.target.value)}
               className="w-full px-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl"
               placeholder="ปีที่เข้าศึกษา"
             />
@@ -186,11 +233,15 @@ function Input({
   icon,
   type = "text",
   placeholder,
+  value,
+  onChange,
 }: {
   label: string;
   icon?: React.ReactNode;
   type?: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (e: { target: { value: SetStateAction<string> } }) => void;
 }) {
   return (
     <div className="space-y-2">
@@ -206,6 +257,8 @@ function Input({
         <input
           type={type}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
           className="w-full pl-12 pr-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
         />
       </div>

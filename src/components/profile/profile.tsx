@@ -21,7 +21,7 @@ export default function MainProfile() {
   };
 
   const handleSave = () => {
-    console.log("บันทึกข้อมูล:", profile);
+    // console.log("บันทึกข้อมูล:", profile);
     // TODO: เรียก API update profile
     setIsEdit(false);
   };
