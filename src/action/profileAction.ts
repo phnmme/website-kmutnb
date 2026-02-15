@@ -10,7 +10,7 @@ async function getProfile() {
   }
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/profile/authorized/getprofile`,
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/profile/authorized/getprofile`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -35,7 +35,7 @@ async function updateProfile(profileData: {
   }
   try {
     const res = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/profile/authorized/updateprofile`,
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/profile/authorized/updateprofile`,
       profileData,
       {
         headers: { Authorization: `Bearer ${token}` },

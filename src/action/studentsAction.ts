@@ -5,7 +5,7 @@ import axios from "axios";
 async function getAllYear() {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/students/guest/getallyear`
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/students/guest/getallyear`
     );
     return res.data;
   } catch (error) {
@@ -20,7 +20,7 @@ export async function getStudentsByYear(
 ) {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/students/guest/getstudentbyyear?year=${year}&skip=${skip}`
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/students/guest/getstudentbyyear?year=${year}&skip=${skip}`
     );
     return res.data;
   } catch (error) {

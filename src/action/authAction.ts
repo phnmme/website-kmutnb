@@ -48,7 +48,7 @@ async function getMe() {
   }
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/authorized/me`,
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/auth/authorized/me`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -66,7 +66,7 @@ async function verify(page: string) {
   }
   try {
     await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/authorized/verify/${page}`,
+      `${process.env.NEXT_PUBLIC_API_URL}api/v1/auth/authorized/verify/${page}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

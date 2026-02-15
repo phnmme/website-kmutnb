@@ -37,7 +37,7 @@ export default function StudentsList({ years }: Props) {
       setLoading(true);
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/students/guest/getstudentbyyear?year=${selectedYear}`
+          `${process.env.NEXT_PUBLIC_API_URL}api/v1/students/guest/getstudentbyyear?year=${selectedYear}`
         );
 
         const json = await res.json();
