@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -12,6 +13,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { SetStateAction, useState } from "react";
+import { useRouter } from "next/navigation"; // เพิ่ม
 import Particles from "../bits/Particles";
 import { register } from "@/action/authAction";
 
@@ -28,19 +30,70 @@ export default function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [entryYear, setEntryYear] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false); // เพิ่ม
+  const [error, setError] = useState(""); // เพิ่ม
+  const [success, setSuccess] = useState(""); // เพิ่ม
+  const router = useRouter(); // เพิ่ม
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await register(
-      email,
-      password,
-      confirmPassword,
-      studentCode,
-      firstNameTh,
-      lastNameTh,
-      phoneNumber,
-      entryYear
-    );
-    // console.log(response);
+
+    // Validation
+    if (
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !studentCode ||
+      !firstNameTh ||
+      !lastNameTh ||
+      !phoneNumber ||
+      !entryYear
+    ) {
+      setError("กรุณากรอกข้อมูลให้ครบถ้วน");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("รหัสผ่านไม่ตรงกัน");
+      return;
+    }
+
+    if (password.length < 6) {
+      // เพิ่ม validation ความยาวรหัสผ่าน
+      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await register(
+        email,
+        password,
+        confirmPassword,
+        studentCode,
+        firstNameTh,
+        lastNameTh,
+        phoneNumber,
+        entryYear
+      );
+
+      if (response) {
+        setSuccess("ลงทะเบียนสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...");
+
+        // Redirect ไปหน้า login หลังจาก 2 วินาที
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error("Registration failed:", error);
+      setError(error.message || "ลงทะเบียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -68,6 +121,20 @@ export default function Register() {
         </p>
 
         <form className="p-8 space-y-10 w-full" onSubmit={handleSubmit}>
+          {/* เพิ่ม: Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* เพิ่ม: Success Message */}
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-xl text-sm">
+              {success}
+            </div>
+          )}
+
           <section className="space-y-4">
             <h2 className="font-bold text-bluez-tone-5 flex items-center gap-2">
               <Lock size={18} />
@@ -77,7 +144,8 @@ export default function Register() {
             {/* Email */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-bluez-tone-5 ml-1">
-                อีเมล (มหาวิทยาลัยเท่านั้น)
+                อีเมล (มหาวิทยาลัยเท่านั้น){" "}
+                <span className="text-red-500">*</span>
               </label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-3.5 text-bluez-tone-1" />
@@ -88,6 +156,7 @@ export default function Register() {
                   placeholder="example@xyz.xyz"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading} // เพิ่ม
                 />
               </div>
             </div>
@@ -96,21 +165,24 @@ export default function Register() {
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-bluez-tone-5 ml-1">
-                  รหัสผ่าน
+                  รหัสผ่าน <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-3.5 text-bluez-tone-1" />
                   <input
                     type={showPassword ? "text" : "password"}
+                    required
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-12 pr-12 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
+                    disabled={isLoading} // เพิ่ม
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-3.5 text-bluez-tone-1 cursor-pointer"
+                    disabled={isLoading} // เพิ่ม
                   >
                     {showPassword ? <EyeOff /> : <Eye />}
                   </button>
@@ -119,21 +191,24 @@ export default function Register() {
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-bluez-tone-5 ml-1">
-                  ยืนยันรหัสผ่าน
+                  ยืนยันรหัสผ่าน <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-3.5 text-bluez-tone-1" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
+                    required
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-12 pr-12 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
+                    disabled={isLoading} // เพิ่ม
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-4 top-3.5 text-bluez-tone-1 cursor-pointer"
+                    disabled={isLoading} // เพิ่ม
                   >
                     {showConfirmPassword ? <EyeOff /> : <Eye />}
                   </button>
@@ -157,6 +232,8 @@ export default function Register() {
                 onChange={(e: { target: { value: SetStateAction<string> } }) =>
                   setStudentCode(e.target.value)
                 }
+                required
+                disabled={isLoading} // เพิ่ม
               />
               <Input
                 label="ชื่อ (ไทย)"
@@ -165,6 +242,8 @@ export default function Register() {
                 onChange={(e: { target: { value: SetStateAction<string> } }) =>
                   setFirstNameTh(e.target.value)
                 }
+                required
+                disabled={isLoading} // เพิ่ม
               />
               <Input
                 label="นามสกุล (ไทย)"
@@ -173,6 +252,8 @@ export default function Register() {
                 onChange={(e: { target: { value: SetStateAction<string> } }) =>
                   setLastNameTh(e.target.value)
                 }
+                required
+                disabled={isLoading} // เพิ่ม
               />
               <Input
                 label="เบอร์โทรศัพท์"
@@ -183,6 +264,8 @@ export default function Register() {
                 onChange={(e: { target: { value: SetStateAction<string> } }) =>
                   setPhoneNumber(e.target.value)
                 }
+                required
+                disabled={isLoading} // เพิ่ม
               />
             </div>
           </section>
@@ -201,16 +284,24 @@ export default function Register() {
             />
             <input
               type="number"
+              required
               value={entryYear}
               onChange={(e) => setEntryYear(e.target.value)}
-              className="w-full px-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl"
-              placeholder="ปีที่เข้าศึกษา"
+              className="w-full px-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
+              placeholder="ปีที่เข้าศึกษา (เช่น 2567)"
+              disabled={isLoading} // เพิ่ม
+              min="2500" // เพิ่ม validation
+              max="2600" // เพิ่ม validation
             />
           </section>
 
-          <button className="w-full bg-congress-300 text-white p-4 rounded-xl hover:bg-congress-400 transition font-semibold flex items-center justify-center gap-3">
+          <button
+            type="submit"
+            disabled={isLoading} // เพิ่ม
+            className="w-full bg-congress-300 text-white p-4 rounded-xl hover:bg-congress-400 transition font-semibold flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม disabled styles
+          >
             <UserPlus />
-            ลงทะเบียนและเริ่มต้นใช้งาน
+            {isLoading ? "กำลังลงทะเบียน..." : "ลงทะเบียนและเริ่มต้นใช้งาน"}
           </button>
         </form>
 
@@ -235,6 +326,8 @@ function Input({
   placeholder,
   value,
   onChange,
+  required = false, // เพิ่ม
+  disabled = false, // เพิ่ม
 }: {
   label: string;
   icon?: React.ReactNode;
@@ -242,11 +335,13 @@ function Input({
   placeholder?: string;
   value?: string;
   onChange?: (e: { target: { value: SetStateAction<string> } }) => void;
+  required?: boolean; // เพิ่ม
+  disabled?: boolean; // เพิ่ม
 }) {
   return (
     <div className="space-y-2">
       <label className="text-sm font-semibold text-bluez-tone-5 ml-1">
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
         {icon && (
@@ -259,7 +354,9 @@ function Input({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="w-full pl-12 pr-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none"
+          required={required} // เพิ่ม
+          disabled={disabled} // เพิ่ม
+          className="w-full pl-12 pr-4 py-3 bg-bluez-tone-3/50 border border-bluez-tone-1 rounded-xl outline-none focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม disabled styles
         />
       </div>
     </div>

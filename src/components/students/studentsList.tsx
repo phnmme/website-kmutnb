@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import StudentCard from "./StudentCard";
-import { Search, ChevronDown } from "lucide-react";
+import { Search } from "lucide-react";
 import Particles from "../bits/Particles";
+import { getStudentsByYear } from "@/action/studentsAction"; // เพิ่ม import
 
 type StudentApi = {
   id: number;
@@ -30,22 +32,30 @@ export default function StudentsList({ years }: Props) {
   const [search, setSearch] = useState("");
   const [groups, setGroups] = useState<GroupedStudents[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // เพิ่ม
 
   // ===== Fetch students =====
   useEffect(() => {
     const fetchStudents = async () => {
       setLoading(true);
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}api/v1/students/guest/getstudentbyyear?year=${selectedYear}`
-        );
+      setError(""); // ล้าง error ก่อน fetch
 
-        const json = await res.json();
+      try {
+        // ใช้ action function แทน fetch โดยตรง
+        const result = await getStudentsByYear(selectedYear, 0);
+
+        if (!result) {
+          setError("ไม่สามารถโหลดข้อมูลนักศึกษาได้");
+          setGroups([]);
+          return;
+        }
 
         if (selectedYear === "all") {
-          setGroups(json);
+          // API คืนค่าเป็น array ของ GroupedStudents
+          setGroups(result.data || result || []);
         } else {
-          const students: StudentApi[] = json.data?.students || [];
+          // API คืนค่าเป็น object ที่มี students array
+          const students: StudentApi[] = result.data?.students || [];
 
           setGroups([
             {
@@ -55,8 +65,9 @@ export default function StudentsList({ years }: Props) {
             },
           ]);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Fetch students error:", err);
+        setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
         setGroups([]);
       } finally {
         setLoading(false);
@@ -68,9 +79,9 @@ export default function StudentsList({ years }: Props) {
 
   // ===== Search filter =====
   const filteredGroups = useMemo(() => {
-    if (!search) return groups;
+    if (!search.trim()) return groups; // แก้: เช็คว่างด้วย trim()
 
-    const q = search.toLowerCase();
+    const q = search.toLowerCase().trim();
 
     return groups
       .map((group) => ({
@@ -105,7 +116,8 @@ export default function StudentsList({ years }: Props) {
           <div className="mb-6">
             <button
               onClick={() => setSelectedYear("all")}
-              className="px-4 py-2 rounded-md border text-sm bg-white cursor-pointer hover:bg-gray-100 transition"
+              disabled={loading} // เพิ่ม
+              className="px-4 py-2 rounded-md border text-sm bg-white cursor-pointer hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม disabled styles
             >
               ← กลับไปดูทุกปี
             </button>
@@ -125,7 +137,8 @@ export default function StudentsList({ years }: Props) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="ค้นหา ชื่อ / รหัส / อาชีพ"
-                className="w-full rounded-xl border bg-gray-50 pl-10 pr-4 py-2.5 text-sm"
+                disabled={loading} // เพิ่ม
+                className="w-full rounded-xl border bg-gray-50 pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-bluez-tone-3 disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม
               />
             </div>
 
@@ -138,7 +151,8 @@ export default function StudentsList({ years }: Props) {
                     e.target.value === "all" ? "all" : Number(e.target.value)
                   )
                 }
-                className="w-full rounded-xl border bg-gray-50 px-4 py-2.5 text-sm"
+                disabled={loading} // เพิ่ม
+                className="w-full rounded-xl border bg-gray-50 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-bluez-tone-3 disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม
               >
                 <option value="all">ทุกปีที่จบ</option>
                 {years.map((year) => (
@@ -147,21 +161,28 @@ export default function StudentsList({ years }: Props) {
                   </option>
                 ))}
               </select>
-
-              {/* <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" /> */}
             </div>
           </div>
         </div>
 
+        {/* ===== Error Message ===== */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+            {error}
+          </div>
+        )}
+
         {/* ===== Loading ===== */}
         {loading && (
-          <div className="text-center py-20 text-bluez-tone-5">
-            กำลังโหลดข้อมูล...
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-bluez-tone-5"></div>
+            <p className="mt-4 text-bluez-tone-5">กำลังโหลดข้อมูล...</p>
           </div>
         )}
 
         {/* ===== Data ===== */}
         {!loading &&
+          !error && // เพิ่ม: ไม่แสดงถ้ามี error
           filteredGroups.map((group) => (
             <section key={group.gradYear} className="mb-14">
               {/* Header */}
@@ -174,8 +195,8 @@ export default function StudentsList({ years }: Props) {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {group.students.length}
+                  <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
+                    {group.students.length} คน
                   </span>
 
                   {/* ดูเพิ่มเติม (แสดงเฉพาะตอน all) */}
@@ -184,7 +205,7 @@ export default function StudentsList({ years }: Props) {
                       onClick={() => setSelectedYear(group.gradYear)}
                       className="text-sm px-3 py-1 rounded-md bg-bluez-tone-3 text-white hover:bg-bluez-tone-2 cursor-pointer hover:text-bluez-tone-4 transition"
                     >
-                      ดูเพิ่มเติม
+                      ดูเพิ่มเติม →
                     </button>
                   )}
                 </div>
@@ -200,8 +221,7 @@ export default function StudentsList({ years }: Props) {
                     <StudentCard
                       student={{
                         id: student.id,
-                        fullName:
-                          student.firstNameTh + " " + student.lastNameTh,
+                        fullName: `${student.firstNameTh} ${student.lastNameTh}`, // เปลี่ยนเป็น template literal
                         studentId: student.studentCode,
                         graduationYear: student.gradYear,
                         currentOccupation:
@@ -214,9 +234,21 @@ export default function StudentsList({ years }: Props) {
             </section>
           ))}
 
-        {!loading && filteredGroups.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
-            ไม่พบนักศึกษาที่ตรงกับเงื่อนไข
+        {/* ===== No Data ===== */}
+        {!loading && !error && filteredGroups.length === 0 && (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-gray-400 text-lg">
+              {search ? "ไม่พบนักศึกษาที่ตรงกับคำค้นหา" : "ไม่มีข้อมูลนักศึกษา"}
+            </p>
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="mt-4 text-sm text-bluez-tone-3 hover:underline"
+              >
+                ล้างคำค้นหา
+              </button>
+            )}
           </div>
         )}
       </div>

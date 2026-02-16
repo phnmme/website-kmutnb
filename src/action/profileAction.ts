@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use server";
+"use client";
 
 import axios from "axios";
-import { cookies } from "next/headers";
 
 // axios instance
 const api = axios.create({
@@ -12,16 +11,19 @@ const api = axios.create({
   },
 });
 
-// helper ดึง token
-async function getToken() {
-  return (await cookies()).get("token")?.value;
+// helper ดึง token จาก localStorage
+function getToken() {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token");
+  }
+  return null;
 }
 
 // =======================
-// Get Profile (SSR)
+// Get Profile (Client-side)
 // =======================
 async function getProfile() {
-  const token = await getToken();
+  const token = getToken();
   if (!token) return null;
 
   try {
@@ -51,7 +53,7 @@ async function updateProfile(profileData: {
   gradYear: number;
   jobField: string;
 }) {
-  const token = await getToken();
+  const token = getToken();
   if (!token) return null;
 
   try {
@@ -71,7 +73,7 @@ async function updateProfile(profileData: {
       "Error updating profile:",
       error.response?.data || error.message
     );
-    return null;
+    throw new Error(error.response?.data?.message || "Update profile failed");
   }
 }
 

@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import axios from "axios";
 
 // axios instance
@@ -28,10 +30,7 @@ async function getAllYear() {
 // =======================
 // Get students by year
 // =======================
-export async function getStudentsByYear(
-  year: string | number,
-  skip: number = 0
-) {
+async function getStudentsByYear(year: string | number, skip: number = 0) {
   try {
     const res = await api.get("/api/v1/students/guest/getstudentbyyear", {
       params: {
@@ -50,4 +49,4 @@ export async function getStudentsByYear(
   }
 }
 
-export { getAllYear };
+export { getAllYear, getStudentsByYear };
