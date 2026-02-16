@@ -10,7 +10,7 @@ type Props = {
   onLogout?: () => void;
 };
 
-export default function NavbarActions({ user }: Props) {
+export default function NavbarActions({ user, onLogout }: Props) {
   if (!user) {
     return (
       <div className="flex gap-3">
@@ -53,7 +53,7 @@ export default function NavbarActions({ user }: Props) {
 
       {/* Logout */}
       <button
-        // onClick={onLogout}
+        onClick={onLogout}
         className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm border border-red-200 
         text-red-500 hover:bg-red-50 hover:border-red-300 transition"
       >

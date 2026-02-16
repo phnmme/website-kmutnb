@@ -10,6 +10,7 @@ import { User as UserType } from "@/types/user";
 type Props = {
   isOpen: boolean;
   user?: UserType | null;
+  loading?: boolean; // เพิ่ม
   onClose: () => void;
   onLogout?: () => void;
 };
@@ -17,6 +18,7 @@ type Props = {
 export default function MobileSidebar({
   isOpen,
   user,
+  loading = false, // เพิ่ม
   onClose,
   onLogout,
 }: Props) {
@@ -35,16 +37,16 @@ export default function MobileSidebar({
 
           {/* sidebar */}
           <motion.aside
-            className="fixed top-0 right-0 h-full w-72 bg-bluez-tone-3 shadow-md backdrop-blur-md z-60  flex flex-col"
+            className="fixed top-0 right-0 h-full w-72 bg-bluez-tone-3 shadow-md backdrop-blur-md z-60 flex flex-col"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 260, damping: 25 }}
           >
             {/* header */}
-            <div className="h-16 px-4 flex items-center justify-between border-b text-congress-50 ">
+            <div className="h-16 px-4 flex items-center justify-between border-b text-congress-50">
               <span className="font-bold text-lg">หน้าเมนู</span>
-              <button onClick={onClose}>
+              <button onClick={onClose} aria-label="ปิดเมนู">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -56,7 +58,7 @@ export default function MobileSidebar({
                   key={link.href}
                   href={link.href}
                   onClick={onClose}
-                  className="text-congress-50 hover:text-black"
+                  className="text-congress-50 hover:text-black transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -65,7 +67,14 @@ export default function MobileSidebar({
 
             {/* auth section */}
             <div className="p-4 border-t border-congress-50 flex flex-col gap-3">
-              {!user ? (
+              {/* เพิ่ม: Loading skeleton */}
+              {loading ? (
+                <div className="space-y-3">
+                  <div className="h-10 bg-congress-50/20 rounded-md animate-pulse"></div>
+                  <div className="h-10 bg-congress-50/20 rounded-md animate-pulse"></div>
+                </div>
+              ) : !user ? (
+                // Guest - ไม่ได้ login
                 <>
                   <Link
                     href="/login"
@@ -85,20 +94,38 @@ export default function MobileSidebar({
                   </Link>
                 </>
               ) : (
+                // User logged in
                 <>
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <User className="w-4 h-4" />
-                    {user.name}
+                  <div className="px-3 py-2 bg-congress-50/10 rounded-md">
+                    <div className="flex items-center gap-2 text-sm font-medium text-congress-50">
+                      <User className="w-4 h-4" />
+                      <span className="truncate">
+                        {user.name || "ผู้ใช้ไม่ระบุชื่อ"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-congress-50/70 mt-1 truncate">
+                      {user.email}
+                    </p>
                   </div>
+
+                  <Link
+                    href="/profile"
+                    onClick={onClose}
+                    className="flex items-center gap-2 px-4 py-2 border border-congress-50 text-congress-50 rounded-md hover:bg-bluez-tone-2 hover:text-bluez-tone-1 transition duration-300"
+                  >
+                    <User className="w-4 h-4" />
+                    โปรไฟล์
+                  </Link>
+
                   <button
                     onClick={() => {
                       onLogout?.();
                       onClose();
                     }}
-                    className="flex items-center gap-2 px-4 py-2 border rounded-md text-left"
+                    className="flex items-center gap-2 px-4 py-2 border border-red-400 text-red-400 rounded-md hover:bg-red-50 hover:text-red-600 transition duration-300"
                   >
                     <LogOut className="w-4 h-4" />
-                    Logout
+                    ออกจากระบบ
                   </button>
                 </>
               )}

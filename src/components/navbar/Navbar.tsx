@@ -11,11 +11,13 @@ import { User } from "@/types/user";
 
 type Props = {
   user?: User | null;
+  loading?: boolean; // เพิ่ม
   onLogout?: () => void;
 };
 
-export default function Navbar({ user, onLogout }: Props) {
+export default function Navbar({ user, loading = false, onLogout }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -35,13 +37,22 @@ export default function Navbar({ user, onLogout }: Props) {
           <NavbarLinks />
           <div className="flex items-center gap-4">
             <div className="hidden lg:block">
-              <NavbarActions user={user} onLogout={onLogout} />
+              {/* เพิ่ม: Loading skeleton */}
+              {loading ? (
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-20 bg-gray-200/50 rounded-md animate-pulse"></div>
+                  <div className="h-8 w-20 bg-gray-200/50 rounded-md animate-pulse"></div>
+                </div>
+              ) : (
+                <NavbarActions user={user} onLogout={onLogout} />
+              )}
             </div>
 
             <button
               onClick={() => setIsOpen(true)}
               className="lg:hidden p-2 rounded-md hover:bg-gray-100"
               aria-label="Open menu"
+              disabled={loading} // เพิ่ม
             >
               <Menu className="w-6 h-6 text-congress-50" />
             </button>
@@ -52,6 +63,7 @@ export default function Navbar({ user, onLogout }: Props) {
       <MobileSidebar
         isOpen={isOpen}
         user={user}
+        loading={loading} // เพิ่ม prop
         onClose={() => setIsOpen(false)}
         onLogout={onLogout}
       />

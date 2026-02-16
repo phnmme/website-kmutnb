@@ -1,17 +1,38 @@
+// authGuard.ts
+"use client";
+
 import { verify } from "@/action/authAction";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default async function authGuard(page: string) {
-  const token = (await cookies()).get("token")?.value;
+  // ตรวจสอบ token จาก localStorage
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   if (!token) {
-    redirect("/login");
+    // Redirect ไปหน้า login
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    return false;
   }
 
-  const isAuthorized = await verify(page);
+  try {
+    const isAuthorized = await verify(page);
 
-  if (!isAuthorized) {
-    redirect("/login");
+    if (!isAuthorized) {
+      // Redirect ไปหน้า login
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Auth guard error:", error);
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    return false;
   }
 }
