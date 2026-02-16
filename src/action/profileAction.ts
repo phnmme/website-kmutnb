@@ -1,27 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import axios from "axios";
 import { cookies } from "next/headers";
 
+// axios instance
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// helper ดึง token
+async function getToken() {
+  return (await cookies()).get("token")?.value;
+}
+
+// =======================
+// Get Profile (SSR)
+// =======================
 async function getProfile() {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    return null;
-  }
+  const token = await getToken();
+  if (!token) return null;
+
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}api/v1/profile/authorized/getprofile`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const res = await api.get("/api/v1/profile/authorized/getprofile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return res.data;
-  } catch (error) {
-    console.error("Error fetching profile data:", error);
+  } catch (error: any) {
+    console.error(
+      "Error fetching profile:",
+      error.response?.data || error.message
+    );
     return null;
   }
 }
 
+// =======================
+// Update Profile
+// =======================
 async function updateProfile(profileData: {
   fullname: string;
   studentCode: string;
@@ -29,21 +51,26 @@ async function updateProfile(profileData: {
   gradYear: number;
   jobField: string;
 }) {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    return null;
-  }
+  const token = await getToken();
+  if (!token) return null;
+
   try {
-    const res = await axios.put(
-      `${process.env.NEXT_PUBLIC_API_URL}api/v1/profile/authorized/updateprofile`,
+    const res = await api.put(
+      "/api/v1/profile/authorized/updateprofile",
       profileData,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
+
     return res.data;
-  } catch (error) {
-    console.error("Error updating profile data:", error);
+  } catch (error: any) {
+    console.error(
+      "Error updating profile:",
+      error.response?.data || error.message
+    );
     return null;
   }
 }
