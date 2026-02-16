@@ -64,7 +64,7 @@ async function register(
   firstNameTh: string,
   lastNameTh: string,
   phoneNumber: string,
-  entryYear: string
+  entryYear: number
 ) {
   try {
     const response = await api.post("/api/v1/auth/guest/register", {

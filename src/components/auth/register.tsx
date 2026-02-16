@@ -77,13 +77,12 @@ export default function Register() {
         firstNameTh,
         lastNameTh,
         phoneNumber,
-        entryYear
+        Number(entryYear)
       );
 
       if (response) {
         setSuccess("ลงทะเบียนสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...");
 
-        // Redirect ไปหน้า login หลังจาก 2 วินาที
         setTimeout(() => {
           router.push("/login");
         }, 2000);
