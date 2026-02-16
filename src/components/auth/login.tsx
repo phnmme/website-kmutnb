@@ -13,7 +13,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false); // เพิ่ม
   const [error, setError] = useState(""); // เพิ่ม
-  const router = useRouter(); // เพิ่ม
 
   const handleLogin = async () => {
     // Validation
@@ -29,9 +28,8 @@ export default function Login() {
       const response = await login(email, password);
 
       if (response) {
-        // Login สำเร็จ - redirect ไปหน้าหลัก
-        router.push("/");
-        // หรือใช้ window.location.href = "/" ถ้าต้องการ hard refresh
+        // Login สำเร็จ - hard refresh และ redirect ไปหน้าหลัก
+        window.location.href = "/";
       }
     } catch (error: any) {
       console.error("Login failed:", error);
