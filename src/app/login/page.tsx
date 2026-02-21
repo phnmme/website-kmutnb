@@ -10,7 +10,6 @@ export default function LoginPage() {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // ตรวจสอบว่ามี token หรือไม่
     const token = localStorage.getItem("token");
 
     if (token) {

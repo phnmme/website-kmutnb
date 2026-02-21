@@ -14,7 +14,6 @@ type StudentApi = {
   lastNameTh: string;
   gradYear: number;
   jobField: string | null;
-  jobPosition: string | null;
 };
 
 type GroupedStudents = {
@@ -38,7 +37,7 @@ export default function StudentsList({ years }: Props) {
   useEffect(() => {
     const fetchStudents = async () => {
       setLoading(true);
-      setError(""); // ล้าง error ก่อน fetch
+      setError(""); 
 
       try {
         // ใช้ action function แทน fetch โดยตรง
@@ -88,7 +87,7 @@ export default function StudentsList({ years }: Props) {
         ...group,
         students: group.students.filter((s) => {
           const fullName = `${s.firstNameTh} ${s.lastNameTh}`.toLowerCase();
-          const occupation = (s.jobPosition || s.jobField || "").toLowerCase();
+          const occupation = (s.jobField || "").toLowerCase();
 
           return (
             fullName.includes(q) ||
@@ -221,11 +220,10 @@ export default function StudentsList({ years }: Props) {
                     <StudentCard
                       student={{
                         id: student.id,
-                        fullName: `${student.firstNameTh} ${student.lastNameTh}`, // เปลี่ยนเป็น template literal
+                        fullName: `${student.firstNameTh} ${student.lastNameTh}`,
                         studentId: student.studentCode,
                         graduationYear: student.gradYear,
-                        currentOccupation:
-                          student.jobPosition || student.jobField || "ไม่ระบุ",
+                        currentOccupation: student.jobField || "ไม่ระบุ",
                       }}
                     />
                   </div>

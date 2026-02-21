@@ -14,18 +14,15 @@ export default function RegisterPage() {
     if (hasChecked.current) return;
     hasChecked.current = true;
 
-    // ตรวจสอบว่ามี token หรือไม่
     const token = localStorage.getItem("token");
 
     if (token) {
-      // ถ้ามี token แล้ว redirect ไปหน้าหลัก
       router.push("/");
     } else {
       setIsChecking(false);
     }
   }, [router]);
 
-  // แสดง loading ขณะตรวจสอบ
   if (isChecking) {
     return (
       <div className="relative flex items-center justify-center min-h-screen bg-bluez-tone-4">

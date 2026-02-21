@@ -22,7 +22,8 @@ interface prop {
       entryYear: number;
       gradYear: number;
       jobField: string | null;
-      jobPosition: string | null;
+      continued_from_coop: boolean;
+      employment_sector: string;
     };
   } | null;
 }
@@ -30,31 +31,62 @@ interface prop {
 export default function MainProfile({ user }: prop) {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // เพิ่ม
-  const [error, setError] = useState(""); // เพิ่ม
-  const [success, setSuccess] = useState(""); // เพิ่ม
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const [profile, setProfile] = useState({
     fullName:
-      user?.profile?.firstNameTh && user?.profile?.lastNameTh // แก้ไข: ป้องกัน "undefined undefined"
+      user?.profile?.firstNameTh && user?.profile?.lastNameTh
         ? `${user.profile.firstNameTh} ${user.profile.lastNameTh}`
         : "ไม่ระบุ",
     studentCode: user?.profile?.studentCode || "ไม่ระบุ",
     department: user?.profile?.department || "ไม่ระบุ",
     gradYear: user?.profile?.gradYear
       ? String(user.profile.gradYear)
-      : "ไม่ระบุ", // แก้ไข
+      : "ไม่ระบุ",
     jobField: user?.profile?.jobField || "ไม่ระบุ",
+    continuedFromCoop: user?.profile?.continued_from_coop || false,
+    employmentSector: user?.profile?.employment_sector || null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
-    setError(""); // ล้าง error เมื่อมีการแก้ไข
+
+    setProfile((prev) => {
+      if (name === "continuedFromCoop") {
+        return {
+          ...prev,
+          continuedFromCoop: value === "true",
+        };
+      }
+
+      if (name === "employmentSector") {
+        return {
+          ...prev,
+          employmentSector: value || null,
+        };
+      }
+
+      if (name === "jobField" && value.trim() === "") {
+        return {
+          ...prev,
+          jobField: value,
+          continuedFromCoop: false,
+          employmentSector: null,
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+
+    setError("");
   };
 
   const handleSave = async () => {
-    // Validation
     if (!profile.fullName || profile.fullName === "ไม่ระบุ") {
       setError("กรุณากรอกชื่อ-นามสกุล");
       return;
@@ -85,7 +117,10 @@ export default function MainProfile({ user }: prop) {
       studentCode: profile.studentCode,
       department: profile.department,
       gradYear: gradYearNum,
-      jobField: profile.jobField === "ไม่ระบุ" ? "" : profile.jobField, // แก้ไข: ส่งค่าว่างแทน "ไม่ระบุ"
+      jobField: profile.jobField === "ไม่ระบุ" ? "" : profile.jobField,
+      continuedFromCoop: profile.continuedFromCoop,
+      employmentSector:
+        profile.employmentSector === null ? null : profile.employmentSector,
     };
 
     try {
@@ -111,7 +146,6 @@ export default function MainProfile({ user }: prop) {
   };
 
   const handleCancel = () => {
-    // รีเซ็ตค่ากลับเป็นค่าเดิม
     setProfile({
       fullName:
         user?.profile?.firstNameTh && user?.profile?.lastNameTh
@@ -123,6 +157,8 @@ export default function MainProfile({ user }: prop) {
         ? String(user.profile.gradYear)
         : "ไม่ระบุ",
       jobField: user?.profile?.jobField || "ไม่ระบุ",
+      continuedFromCoop: user?.profile?.continued_from_coop || false,
+      employmentSector: user?.profile?.employment_sector || null,
     });
     setError("");
     setSuccess("");

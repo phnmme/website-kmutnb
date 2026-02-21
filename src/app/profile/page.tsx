@@ -15,16 +15,13 @@ export default function Page() {
   useEffect(() => {
     const initialize = async () => {
       try {
-        // ตรวจสอบ auth ก่อน
         const isAuth = await authGuard("user");
 
         if (!isAuth) {
-          // authGuard จะ redirect เอง แต่เพิ่มเพื่อความแน่ใจ
           router.push("/login");
           return;
         }
 
-        // ดึงข้อมูล profile
         const data = await getProfile();
 
         if (!data || !data.data || !data.data.user) {

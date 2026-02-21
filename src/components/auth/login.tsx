@@ -3,7 +3,6 @@
 
 import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // เพิ่ม
 import Particles from "../bits/Particles";
 import { login } from "@/action/authAction";
 
@@ -11,11 +10,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // เพิ่ม
-  const [error, setError] = useState(""); // เพิ่ม
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    // Validation
     if (!email || !password) {
       setError("กรุณากรอกอีเมลและรหัสผ่าน");
       return;
@@ -28,7 +26,6 @@ export default function Login() {
       const response = await login(email, password);
 
       if (response) {
-        // Login สำเร็จ - hard refresh และ redirect ไปหน้าหลัก
         window.location.href = "/";
       }
     } catch (error: any) {
@@ -39,7 +36,6 @@ export default function Login() {
     }
   };
 
-  // เพิ่ม: กด Enter เพื่อ login
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !isLoading) {
       handleLogin();
@@ -119,10 +115,10 @@ export default function Login() {
                 disabled={isLoading}
               />
               <button
-                type="button" // เพิ่ม
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 flex items-center pr-4 text-bluez-tone-1 hover:text-[#0075d3] transition-colors"
-                disabled={isLoading} // เพิ่ม
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -131,7 +127,7 @@ export default function Login() {
             <div className="flex justify-center mt-4 group">
               <button
                 onClick={handleLogin}
-                disabled={isLoading} // เพิ่ม
+                disabled={isLoading}
                 className="w-full block bg-congress-300 text-congress-50 p-4 rounded-xl hover:bg-congress-400 transition duration-300 cursor-pointer font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed" // เพิ่ม disabled styles
               >
                 <p>
@@ -140,7 +136,6 @@ export default function Login() {
                     size={20}
                   />
                   {isLoading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}{" "}
-                  {/* เปลี่ยน */}
                 </p>
               </button>
             </div>

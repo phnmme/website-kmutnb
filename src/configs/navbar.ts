@@ -8,10 +8,10 @@ export const navLinks = [
     label: "ข้อมูลนักศึกษา",
     href: "/students",
   },
-  // {
-  //   label: "ข้อมูลสถิติ",
-  //   href: "/statistics",
-  // },
+  {
+    label: "ข้อมูลสถิติ",
+    href: "/statistics",
+  },
   // {
   //   label: "โปรไฟล์",
   //   href: "/profile",
