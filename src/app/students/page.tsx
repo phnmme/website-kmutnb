@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"; // เพิ่ม
 
 import { useEffect, useState } from "react"; // เพิ่ม
