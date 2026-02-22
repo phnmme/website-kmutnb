@@ -1,12 +1,11 @@
 // src/components/navbar/NavbarLinks.tsx
 import Link from "next/link";
-import { navLinks, adminNavLinks } from "@/configs/navbar";
+import { navLinks } from "@/configs/navbar";
 
-export default function NavbarLinks({ isAdmin }: { isAdmin: boolean }) {
-  const links = isAdmin ? adminNavLinks : navLinks;
+export default function NavbarLinks() {
   return (
     <div className="hidden lg:flex gap-6">
-      {links.map((link) => (
+      {navLinks.map((link) => (
         <Link
           key={link.href}
           href={link.href}
