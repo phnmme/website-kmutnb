@@ -12,7 +12,7 @@ const api = axios.create({
 });
 
 // Helper function to get token from localStorage
-const getToken = () => {
+export const getToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token");
   }
@@ -20,14 +20,14 @@ const getToken = () => {
 };
 
 // Helper function to set token in localStorage
-const setToken = (token: string) => {
+export const setToken = (token: string) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("token", token);
   }
 };
 
 // Helper function to remove token from localStorage
-const removeToken = () => {
+export const removeToken = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("token");
   }
@@ -136,4 +136,4 @@ function logout() {
   removeToken();
 }
 
-export { login, register, getMe, verify, logout, getToken };
+export { login, register, getMe, verify, logout };

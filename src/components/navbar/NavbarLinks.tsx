@@ -1,11 +1,13 @@
 // src/components/navbar/NavbarLinks.tsx
 import Link from "next/link";
-import { navLinks } from "@/configs/navbar";
+import { navLinks, authNavLinks } from "@/configs/navbar";
+import { User } from "@/types/user";
 
-export default function NavbarLinks() {
+export default function NavbarLinks({ user }: { user?: User | null }) {
+  const links = user ? authNavLinks : navLinks;
   return (
     <div className="hidden lg:flex gap-6">
-      {navLinks.map((link) => (
+      {links.map((link) => (
         <Link
           key={link.href}
           href={link.href}

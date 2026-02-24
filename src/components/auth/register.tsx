@@ -32,8 +32,8 @@ export default function Register() {
 
   const [isLoading, setIsLoading] = useState(false); // เพิ่ม
   const [error, setError] = useState(""); // เพิ่ม
-  const [success, setSuccess] = useState(""); // เพิ่ม
-  const router = useRouter(); // เพิ่ม
+  const [success, setSuccess] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -334,8 +334,8 @@ function Input({
   placeholder?: string;
   value?: string;
   onChange?: (e: { target: { value: SetStateAction<string> } }) => void;
-  required?: boolean; // เพิ่ม
-  disabled?: boolean; // เพิ่ม
+  required?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div className="space-y-2">

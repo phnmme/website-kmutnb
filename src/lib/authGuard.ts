@@ -1,18 +1,15 @@
-// authGuard.ts
+// src/action/authGuard.ts
 "use client";
 
 import { verify } from "@/action/authAction";
 
-export default async function authGuard(page: string) {
-  // ตรวจสอบ token จาก localStorage
+export default async function authGuard(page: string): Promise<boolean> {
+  // ── 1. ตรวจ token ──────────────────────────────────────────────────────────
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   if (!token) {
-    // Redirect ไปหน้า login
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
+    redirect("/login");
     return false;
   }
 
@@ -20,19 +17,22 @@ export default async function authGuard(page: string) {
     const isAuthorized = await verify(page);
 
     if (!isAuthorized) {
-      // Redirect ไปหน้า login
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      // มี token แต่ไม่มีสิทธิ์ → ไปหน้า unauthorized แทน login
+      // redirect(page === "admin" ? "" : "/login");
       return false;
     }
 
     return true;
   } catch (error) {
     console.error("Auth guard error:", error);
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
+    localStorage.removeItem("token");
+    redirect("/login");
     return false;
+  }
+}
+
+function redirect(path: string) {
+  if (typeof window !== "undefined") {
+    window.location.href = path;
   }
 }

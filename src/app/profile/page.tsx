@@ -16,15 +16,11 @@ export default function Page() {
     const initialize = async () => {
       try {
         const isAuth = await authGuard("user");
-
-        if (!isAuth) {
-          router.push("/login");
-          return;
-        }
+        if (!isAuth) return;
 
         const data = await getProfile();
 
-        if (!data || !data.data || !data.data.user) {
+        if (!data?.data?.user) {
           setError("ไม่สามารถโหลดข้อมูลโปรไฟล์ได้");
           return;
         }
@@ -39,9 +35,8 @@ export default function Page() {
     };
 
     initialize();
-  }, [router]);
+  }, []);
 
-  // Loading state
   if (loading) {
     return (
       <div className="relative flex items-center justify-center min-h-screen bg-bluez-tone-4">

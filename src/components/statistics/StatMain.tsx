@@ -23,7 +23,7 @@ export default function StatMain({ statistics }: StatMainProps) {
           disableRotation={false}
         />
       </div>
-      <div className="relative z-10 bg-bluez-tone-1 rounded-2xl ">
+      <div className="relative z-10 bg-bluez-tone-1/80 rounded-2xl ">
         <header className="rounded-lg ">
           <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-6 sm:px-6 lg:px-8">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-congress-400/20">

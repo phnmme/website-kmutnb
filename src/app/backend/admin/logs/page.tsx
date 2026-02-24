@@ -1,10 +1,10 @@
 "use client";
 
-import { AdminMainPage } from "@/components/admin";
-import authGuard from "@/lib/authGuard";
 import { useEffect, useState } from "react";
+import { ActivityLogPage } from "@/components/admin";
+import authGuard from "@/lib/authGuard";
 
-export default function AdminPage() {
+export default function LogPage() {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
@@ -27,9 +27,10 @@ export default function AdminPage() {
       </div>
     );
   }
+
   return (
     <div className="relative flex items-center justify-center overflow-hidden py-10 pt-26 min-h-screen bg-bluez-tone-4 px-4 md:px-10">
-      <AdminMainPage />
+      <ActivityLogPage />
     </div>
   );
 }

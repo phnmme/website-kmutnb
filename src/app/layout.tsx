@@ -8,7 +8,7 @@ import { Navbar } from "@/components/navbar";
 import { Prompt } from "next/font/google";
 import "./globals.css";
 import { getCurrentUser } from "@/lib/getCurrentUser";
-import { logout } from "@/action/authAction"; // เพิ่ม
+import { logout, removeToken } from "@/action/authAction";
 import { User } from "@/types/user";
 
 const prompt = Prompt({
@@ -31,8 +31,8 @@ export default function RootLayout({
       try {
         const userData = await getCurrentUser();
         setUser(userData);
-      } catch (error) {
-        console.error("Error fetching user:", error);
+      } catch {
+        removeToken();
         setUser(null);
       } finally {
         setLoading(false);
@@ -40,17 +40,17 @@ export default function RootLayout({
     };
 
     fetchUser();
-  }, []);
+  }, []); // ✅ ไม่มี dependency เพราะ fetchUser ไม่ได้ใช้ค่าจาก state/props
 
   const handleLogout = () => {
-    logout(); // ลบ token จาก localStorage
+    logout();
     setUser(null);
     router.push("/login");
   };
 
   return (
     <html lang="th">
-      <body className={prompt.className}>
+      <body className={`${prompt.className} antialiased`}>
         <Navbar user={user} loading={loading} onLogout={handleLogout} />
         <main>{children}</main>
         <Footer />
