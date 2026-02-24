@@ -5,7 +5,7 @@ export default function FooterLeft() {
         ภาควิชาการจัดการเทคโนโลยีการผลิตและสารสนเทศ
       </h1>
 
-      <p className="text-sm text-gray-600">คณะวิทยาลัยเทคโนโลยีอุตสาหกรรม</p>
+      <p className="text-sm text-gray-600">วิทยาลัยเทคโนโลยีอุตสาหกรรม</p>
       <p className="text-sm text-gray-600">
         มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าพระนครเหนือ
       </p>
